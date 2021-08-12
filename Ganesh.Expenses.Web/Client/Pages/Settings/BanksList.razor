@@ -1,0 +1,81 @@
+﻿@page "/pages/settings/banklist"
+@using Ganesh.Expenses.Web.Shared
+@inject HttpClient Http
+@inject MudBlazor.ISnackbar snackBar
+
+@*<h3>BanksList</h3>*@
+
+<MudTable Items="@banks" Dense=true Filter="new Func<Bank, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of Bank Accounts ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Account Holder Name</MudTh>
+        <MudTh>Bank Name</MudTh>
+         <MudTh>AccountNumber</MudTh>
+        <MudTh>Branch</MudTh>
+        <MudTh>IFSC</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Account Holder Name">@context.Name</MudTd>
+         <MudTd DataLabel="Bank Name">@context.BankName</MudTd>
+           <MudTd DataLabel="AccountNumber">@context.AccountNumber</MudTd>
+        <MudTd DataLabel="Branch">@context.Branch</MudTd>
+        <MudTd DataLabel="IFSC">@context.IFSC</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<Bank> banks = new List<Bank>();
+
+    private Bank bank = null;
+    private string searchString = "";
+    private string link;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBanks();
+    }
+
+    private bool Search(Bank bank)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (bank.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (bank.AccountNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{bank.Name} {bank.Branch} {bank.AccountNumber}".Contains(searchString))
+            return true;
+        if ($"{bank.BankName} {bank.Branch} {bank.AccountNumber}".Contains(searchString))
+            return true;
+        return false;
+    }
+     private void Edit(int id)
+    {
+        link = $"/pages/settings/editbank/{id}";
+        bank = banks.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await Http.DeleteAsync($"api/banks/{id}");
+        snackBar.Add("Bank Deleted.", Severity.Success);
+        await GetBanks();
+    }
+    private async Task<List<Bank>> GetBanks()
+    {
+        banks = new List<Bank>();
+        foreach(Bank b in await Http.GetFromJsonAsync<Bank[]>("api/banks"))
+        {
+            banks.Add(b);
+        }
+        return banks;
+    }
+}

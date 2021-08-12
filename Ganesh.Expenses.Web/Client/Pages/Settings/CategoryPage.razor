@@ -1,0 +1,50 @@
+﻿@page "/pages/settings/categorypage/{folder?}"
+<h3>Categories</h3>
+
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Category App</MudText>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndUp">
+    <MudPaper Elevation="25" Class="d-flex align-center py-1 mb-4">
+        <MudIconButton OnClick="@(() => OpenDrawer())" Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Class="ml-3 mr-2" />
+    </MudPaper>
+</MudHidden>
+
+<div class="d-flex flex-grow-1 flex-row">
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <MudPaper Elevation="25" Class="px-3 py-6 mr-6" MinWidth="250px">
+            <CategoryNavMenu folder="@folder" />
+        </MudPaper>
+    </MudHidden>
+    <MudPaper Elevation="25" Class="py-4 flex-grow-1">
+        
+        @if (folder == "categorieslist")
+        {
+            <CategoriesList />
+        }
+        else if (folder == "addcategory")
+        {
+            <AddCategory />
+        }
+        else
+        {
+            <MudText Align="Align.Center" Class="mt-16">No Category :(</MudText>
+        }
+    </MudPaper>
+</div>
+
+@code {
+    bool open;
+    [Parameter] public string folder { get; set; }
+    protected override void OnInitialized()
+    {
+        if (String.IsNullOrEmpty(folder))
+        {
+            folder = "categorieslist";
+        }
+    }
+     void OpenDrawer()
+    {
+        open = true;
+    }
+}

@@ -1,0 +1,66 @@
+﻿@page "/pages/settings/incometypelist"
+@inject HttpClient Http
+@inject MudBlazor.ISnackbar snackBar
+
+@*<h3>IncomeTypeList</h3>*@
+
+<MudTable Items="@incometypes" Dense=true Filter="new Func<IncomeType, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of Income Types ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Name">@context.Name</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<IncomeType> incometypes = new List<IncomeType>();
+
+    private IncomeType incometype = null;
+    private string searchString = "";
+    private string link;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Getincometypes();
+    }
+
+    private bool Search(IncomeType incometype)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (incometype.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+     private void Edit(int id)
+    {
+        link = $"/pages/settings/editincometype/{id}";
+        incometype = incometypes.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await Http.DeleteAsync($"api/incometypes/{id}");
+        snackBar.Add("Income Type Deleted.", Severity.Success);
+        await Getincometypes();
+    }
+    private async Task<List<IncomeType>> Getincometypes()
+    {
+        incometypes = new List<IncomeType>();
+        foreach(IncomeType b in await Http.GetFromJsonAsync<IncomeType[]>("api/incometypes"))
+        {
+            incometypes.Add(b);
+        }
+        return incometypes;
+    }
+}

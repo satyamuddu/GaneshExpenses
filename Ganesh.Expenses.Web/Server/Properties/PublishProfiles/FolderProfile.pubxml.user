@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Code\2022\Ganesh.Expenses\Ganesh.Expenses.Web\Server\bin\Debug\net6.0\publish\</_PublishTargetUrl>
+    <History>True|2021-07-21T14:55:10.0035703Z;True|2021-07-21T07:02:13.1669356-07:00;True|2021-07-19T11:31:57.4512694-07:00;True|2021-07-19T11:07:04.5881332-07:00;True|2021-07-19T08:36:17.8656303-07:00;True|2021-07-19T01:29:01.2071944-07:00;</History>
+  </PropertyGroup>
+</Project>

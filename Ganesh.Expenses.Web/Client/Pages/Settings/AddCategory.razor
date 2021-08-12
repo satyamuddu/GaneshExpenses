@@ -1,0 +1,23 @@
+﻿@page "/pages/settings/addcategory"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+<h3>Add Category</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New Category</MudText>
+<MudTextField @bind-Value="bank.Name" T="string" Label="Category Name" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/bankpage" Size="Size.Large">Cancel</MudButton>
+</div>
+
+
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+        protected Bank bank { get; set; } = new Bank();
+        protected async Task AddAsync()
+        {
+        await Http.PostAsJsonAsync("api/categories", bank);
+        NavigationManager.NavigateTo("pages/settings/categorypage");
+        }
+}

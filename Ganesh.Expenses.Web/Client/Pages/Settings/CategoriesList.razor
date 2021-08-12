@@ -1,0 +1,66 @@
+﻿@page "/pages/settings/categorieslist"
+@using Ganesh.Expenses.Web.Shared
+@inject HttpClient Http
+@inject MudBlazor.ISnackbar snackBar
+
+<MudTable Items="@Categories" Dense=true Filter="new Func<Category, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of Categories ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Category Name</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Category Name">@context.Name</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<Category> Categories = new List<Category>();
+
+    private Category Category = null;
+    private string searchString = "";
+    private string link;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategorys();
+    }
+
+    private bool Search(Category category)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (category.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+     private void Edit(int id)
+    {
+        link = $"/pages/settings/editcategory/{id}";
+        Category = Categories.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await Http.DeleteAsync($"api/categories/{id}");
+        snackBar.Add("Category Deleted.", Severity.Success);
+        await GetCategorys();
+    }
+    private async Task<List<Category>> GetCategorys()
+    {
+        Categories = new List<Category>();
+        Category[] categories = await Http.GetFromJsonAsync<Category[]>("api/categories");
+        foreach(Category b in categories)
+        {
+            Categories.Add(b);
+        }
+        return Categories;
+    }
+}

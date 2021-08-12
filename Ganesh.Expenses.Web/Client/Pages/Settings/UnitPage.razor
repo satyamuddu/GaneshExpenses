@@ -1,0 +1,50 @@
+﻿@page "/pages/settings/unitpage/{folder?}"
+<h3>Units Setting</h3>
+
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Units</MudText>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndUp">
+    <MudPaper Elevation="25" Class="d-flex align-center py-1 mb-4">
+        <MudIconButton OnClick="@(() => OpenDrawer())" Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Class="ml-3 mr-2" />
+    </MudPaper>
+</MudHidden>
+
+<div class="d-flex flex-grow-1 flex-row">
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <MudPaper Elevation="25" Class="px-3 py-6 mr-6" MinWidth="250px">
+            <UnitNavMenu folder="@folder" />
+        </MudPaper>
+    </MudHidden>
+    <MudPaper Elevation="25" Class="py-4 flex-grow-1">
+        
+        @if (folder == "unitslist")
+        {
+            <UnitsList />
+        }
+        else if (folder == "addunit")
+        {
+            <AddUnit />
+        }
+        else
+        {
+            <MudText Align="Align.Center" Class="mt-16">No Units :(</MudText>
+        }
+    </MudPaper>
+</div>
+
+@code {
+    bool open;
+    [Parameter] public string folder { get; set; }
+    protected override void OnInitialized()
+    {
+        if (String.IsNullOrEmpty(folder))
+        {
+            folder = "unitslist";
+        }
+    }
+     void OpenDrawer()
+    {
+        open = true;
+    }
+}

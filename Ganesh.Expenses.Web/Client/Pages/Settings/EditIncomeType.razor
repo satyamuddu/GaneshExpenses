@@ -1,0 +1,31 @@
+﻿@page "/pages/settings/editincometype/{id}"
+@inject HttpClient Http
+<h3>Edit Income Type</h3>
+
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit Income Type Details</MudText>
+
+<MudTextField @bind-Value="incometype.Name" T="string" Label="Bank Name" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/incometypelist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    [Parameter]
+    public string id{ get; set; }
+    public IncomeType incometype { get; set; } = new IncomeType();
+    protected override async Task OnInitializedAsync()
+    {
+        incometype = await Http.GetFromJsonAsync<IncomeType>($"api/incometypes/{Convert.ToInt32(id)}");
+    }
+    async Task Update()
+    {
+        await Http.PutAsJsonAsync<IncomeType>($"api/incometypes/{Convert.ToInt32(id)}", incometype);
+        
+        @inject NavigationManager navigationManager;
+        navigationManager.NavigateTo("/pages/settings/incometypepage");
+
+    }
+}

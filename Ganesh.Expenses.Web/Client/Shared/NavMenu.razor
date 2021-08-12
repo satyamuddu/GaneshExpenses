@@ -1,0 +1,30 @@
+﻿@inject NavigationManager navigationManager
+
+<MudNavMenu>
+    <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings">
+        <MudNavLink Href="pages/settings/bankpage" Icon="@Icons.Material.Outlined.AccountBalance">Bank Accounts</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.PointOfSale" OnClick="@(() => OpenIncomeTypePage())">Income Types</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Category" OnClick="@(() => OpenIncomeCategoryPage())">Categories</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Rounded.AdUnits" OnClick="@(() => OpenIncomeUnitPage())">Units</MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>
+
+
+@code{
+    void OpenBankPage()
+    {
+        navigationManager.NavigateTo("pages/settings/bankpage");
+    }
+    void OpenIncomeTypePage()
+    {
+        navigationManager.NavigateTo("pages/settings/incometypepage");
+    }
+    void OpenIncomeCategoryPage()
+    {
+        navigationManager.NavigateTo("pages/settings/categorypage");
+    }
+    void OpenIncomeUnitPage()
+    {
+        navigationManager.NavigateTo("pages/settings/unitpage");
+    }
+}

@@ -1,0 +1,36 @@
+﻿@page "/pages/settings/editbank/{id}"
+@inject HttpClient Http
+
+<h3>Edit Bank</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit New Bank Details</MudText>
+
+<MudTextField @bind-Value="bank.Name" T="string" Label="Account Holder Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.BankName" T="string" Label="Bank Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.AccountNumber" T="string" Label="Account Number" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.Branch" T="string" Label="Branch" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.IFSC" T="string" Label="IFSC" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/banklist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    [Parameter]
+    public string id{ get; set; }
+    public Bank bank { get; set; } = new Bank();
+    //HttpClient httpClient { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        bank = await Http.GetFromJsonAsync<Bank>($"api/banks/{Convert.ToInt32(id)}");
+    }
+    async Task Update()
+    {
+        await Http.PutAsJsonAsync<Bank>($"api/banks/{Convert.ToInt32(id)}", bank);
+        
+        @inject NavigationManager navigationManager;
+        navigationManager.NavigateTo("/pages/settings/bankpage");
+
+    }
+}

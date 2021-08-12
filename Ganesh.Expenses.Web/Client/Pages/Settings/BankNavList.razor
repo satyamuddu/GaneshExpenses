@@ -1,0 +1,22 @@
+﻿@*<h3>BankNavList</h3>*@
+
+<MudList Clickable=true>
+    <MudListItem Text="Bank Accounts" Icon="@Icons.Material.Outlined.AccountBox" Dense="true" Class="@GetClass("bankslist")"/>
+    <MudListItem Href="pages/settings/addbank" Text="Add Bank Account" Icon="@Icons.Material.Outlined.Add" Dense="true" Class="@GetClass("addbank")"/>
+</MudList>
+
+@code {
+    [Parameter] public string folder { get; set; }
+
+    public string GetClass(string _folder)
+    {
+        if (folder == _folder)
+        {
+            return "my-2 rounded mud-primary-text";
+        }
+        else
+        {
+            return "my-2 rounded";
+        }
+    }
+}
