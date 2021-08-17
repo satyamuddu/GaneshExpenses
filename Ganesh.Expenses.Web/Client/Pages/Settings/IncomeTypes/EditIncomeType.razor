@@ -5,7 +5,7 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true">Edit Income Type Details</MudText>
 
-<MudTextField @bind-Value="incometype.Name" T="string" Label="Bank Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="item.Name" T="string" Label="Bank Name" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/incometypelist" Size="Size.Large">Cancel</MudButton>
@@ -15,14 +15,19 @@
     public bool allFieldsEntered { get; set; } = true;
     [Parameter]
     public string id{ get; set; }
-    public IncomeType incometype { get; set; } = new IncomeType();
+    public IncomeType item { get; set; } = new IncomeType();
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<IncomeType> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter { get; set; } 
+    = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incometypes");
+
     protected override async Task OnInitializedAsync()
     {
-        incometype = await Http.GetFromJsonAsync<IncomeType>($"api/incometypes/{Convert.ToInt32(id)}");
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType>(Http);
+        item = await expensesService.GetItem(Convert.ToInt32(id), serviceParameter);
     }
     async Task Update()
     {
-        await Http.PutAsJsonAsync<IncomeType>($"api/incometypes/{Convert.ToInt32(id)}", incometype);
+        await expensesService.UpdateItem(item.Id, item, serviceParameter);
         
         @inject NavigationManager navigationManager;
         navigationManager.NavigateTo("/pages/settings/incometypepage");

@@ -2,6 +2,7 @@
 @using Ganesh.Expenses.Web.Shared
 @inject HttpClient Http
 @inject MudBlazor.ISnackbar snackBar
+@inject Ganesh.Expenses.Web.Client.Services.ICategoryService categoryService
 
 <MudTable Items="@Categories" Dense=true Filter="new Func<Category, bool>(Search)">
      <ToolBarContent>
@@ -28,9 +29,12 @@
     private Category Category = null;
     private string searchString = "";
     private string link;
-
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Category> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
     protected override async Task OnInitializedAsync()
     {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
         await GetCategorys();
     }
 
@@ -49,18 +53,15 @@
     }
     private async Task Delete(int id)
     {
-        await Http.DeleteAsync($"api/categories/{id}");
+        await expensesService.DeleteItem(id, serviceParameter);
+        //await Http.DeleteAsync($"api/categories/{id}");
         snackBar.Add("Category Deleted.", Severity.Success);
         await GetCategorys();
     }
     private async Task<List<Category>> GetCategorys()
     {
-        Categories = new List<Category>();
-        Category[] categories = await Http.GetFromJsonAsync<Category[]>("api/categories");
-        foreach(Category b in categories)
-        {
-            Categories.Add(b);
-        }
+        Categories = await expensesService.GetList(serviceParameter);
+        //Categories = await categoryService.Categories();
         return Categories;
     }
 }

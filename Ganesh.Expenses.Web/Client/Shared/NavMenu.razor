@@ -1,11 +1,20 @@
 ﻿@inject NavigationManager navigationManager
 
 <MudNavMenu>
-    <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings">
+    <MudNavGroup Title="Dashboard" Icon="@Icons.Material.Outlined.Dashboard">
+
+    </MudNavGroup>
+    <MudNavGroup Title="Data Entry" Icon="@Icons.Material.Outlined.Today" Expanded="true">
+        @*<MudNavLink Href="pages/settings/bankpage" Icon="@Icons.Material.Outlined.AccountBalance">Add Income</MudNavLink>
+        <MudNavLink Href="pages/settings/bankpage" Icon="@Icons.Material.Outlined.AccountBalance">Add Exense</MudNavLink>*@
+
+    </MudNavGroup>
+    <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings" Expanded="true">
         <MudNavLink Href="pages/settings/bankpage" Icon="@Icons.Material.Outlined.AccountBalance">Bank Accounts</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Outlined.PointOfSale" OnClick="@(() => OpenIncomeTypePage())">Income Types</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Outlined.Category" OnClick="@(() => OpenIncomeCategoryPage())">Categories</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.Rounded.AdUnits" OnClick="@(() => OpenIncomeUnitPage())">Units</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Rounded.AdUnits" OnClick="@(() => OpenUnitPage())">Units</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Ballot" OnClick="@(() => OpenProductPage())">Products</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
@@ -23,8 +32,12 @@
     {
         navigationManager.NavigateTo("pages/settings/categorypage");
     }
-    void OpenIncomeUnitPage()
+    void OpenUnitPage()
     {
         navigationManager.NavigateTo("pages/settings/unitpage");
+    }
+    void OpenProductPage()
+    {
+        navigationManager.NavigateTo("pages/settings/productpage");
     }
 }

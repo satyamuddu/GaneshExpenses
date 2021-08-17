@@ -1,0 +1,27 @@
+﻿@page "/pages/settings/addcategory"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+<h3>Add Category</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New Category</MudText>
+<MudTextField @bind-Value="category.Name" T="string" Label="Category Name" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/categorypage" Size="Size.Large">Cancel</MudButton>
+</div>
+
+
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+        protected Category category { get; set; } = new Category();
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter { get; set; } = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
+
+        protected async Task AddAsync()
+        {
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<Category> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
+            await expensesService.AddItem(category, serviceParameter);
+            //await Http.PostAsJsonAsync("api/categories", category);
+            NavigationManager.NavigateTo("pages/settings/categorypage");
+        }
+}

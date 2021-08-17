@@ -38,9 +38,12 @@
     private Bank bank = null;
     private string searchString = "";
     private string link;
-
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Bank> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
     protected override async Task OnInitializedAsync()
     {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/banks");
         await GetBanks();
     }
 
@@ -65,17 +68,13 @@
     }
     private async Task Delete(int id)
     {
-        await Http.DeleteAsync($"api/banks/{id}");
+        await expensesService.DeleteItem(id, serviceParameter);
         snackBar.Add("Bank Deleted.", Severity.Success);
         await GetBanks();
     }
     private async Task<List<Bank>> GetBanks()
     {
-        banks = new List<Bank>();
-        foreach(Bank b in await Http.GetFromJsonAsync<Bank[]>("api/banks"))
-        {
-            banks.Add(b);
-        }
+        banks = await expensesService.GetList(serviceParameter);
         return banks;
     }
 }

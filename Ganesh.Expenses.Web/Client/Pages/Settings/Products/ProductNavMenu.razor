@@ -1,0 +1,20 @@
+﻿<MudList Clickable=true>
+    <MudListItem Text="Products" Icon="@Icons.Material.Outlined.Ballot" Dense="true" Class="@GetClass("productslist")"/>
+    <MudListItem Href="pages/settings/addproduct" Text="Add Product" Icon="@Icons.Material.Outlined.Add" Dense="true" Class="@GetClass("addproduct")"/>
+</MudList>
+
+@code {
+    [Parameter] public string folder { get; set; }
+
+    public string GetClass(string _folder)
+    {
+        if (folder == _folder)
+        {
+            return "my-2 rounded mud-primary-text";
+        }
+        else
+        {
+            return "my-2 rounded";
+        }
+    }
+}

@@ -20,9 +20,12 @@
 @code {
     public bool allFieldsEntered { get; set; } = true;
         protected Bank bank { get; set; } = new Bank();
+
         protected async Task AddAsync()
         {
-        await Http.PostAsJsonAsync("api/banks", bank);
-        NavigationManager.NavigateTo("pages/settings/bankpage");
+            Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/banks");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<Bank> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank>(Http);
+            await expensesService.AddItem(bank, serviceParameter);
+            NavigationManager.NavigateTo("pages/settings/bankpage");
         }
 }

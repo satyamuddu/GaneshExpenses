@@ -7,7 +7,7 @@
 <MudTextField @bind-Value="unit.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/bankpage" Size="Size.Large">Cancel</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/unitpage" Size="Size.Large">Cancel</MudButton>
 </div>
 
 
@@ -17,7 +17,12 @@
         protected Unit unit { get; set; } = new Unit();
         protected async Task AddAsync()
         {
-        await Http.PostAsJsonAsync("api/units", unit);
+                        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = 
+                        new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<Unit> expensesService =
+                        new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
+            await expensesService.AddItem(unit, serviceParameter);
+
         NavigationManager.NavigateTo("pages/settings/unitpage");
         }
 }

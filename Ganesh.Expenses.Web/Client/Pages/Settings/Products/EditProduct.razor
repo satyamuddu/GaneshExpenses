@@ -1,0 +1,82 @@
+﻿@page "/pages/settings/editproduct/{id}"
+@inject HttpClient Http
+
+<h3>Edit Product</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit New Product Details</MudText>
+
+<MudTextField @bind-Value="product.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="product.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+
+<MudSelect T="string" Label="Category" @bind-Value="@categoryName" >
+     @foreach (Category item in categories)
+            {
+                <MudSelectItem Value="@item.Name">@item.Name</MudSelectItem>
+            }
+</MudSelect>
+<MudSelect T="string" Label="Unit" @bind-Value="@unitName" >
+     @foreach (Unit item in units)
+            {
+                <MudSelectItem Value="@item.Name">@item.Name</MudSelectItem>
+            }
+</MudSelect>
+
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/productlist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    [Parameter]
+    public string id{ get; set; }
+    public Product product { get; set; } = new Product();
+    protected List<Category> categories { get; set; } = new List<Category>();
+    protected List<Unit> units { get; set; } = new List<Unit>();
+    private string categoryName;
+    private string unitName;
+    Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameterProduct = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/products");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<Product> expensesServiceProduct;
+    protected override async Task OnInitializedAsync()
+    {
+        expensesServiceProduct = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Product>(Http);
+
+        var expensesServiceCategory = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
+        var serviceParameterCategory = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
+
+        categories = await expensesServiceCategory.GetList(serviceParameterCategory);
+
+        var expensesServiceUnit = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
+        var serviceParameterUnit = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units");
+
+        units = await expensesServiceUnit.GetList(serviceParameterUnit);
+
+
+        product = await expensesServiceProduct.GetItem(Convert.ToInt32(id), serviceParameterProduct);
+        if (product.Category != null)
+        {
+            categoryName = product.Category.Name;
+        }
+        if (product.Unit!=null){
+            unitName = product.Unit.Name;
+        }
+    }
+    async Task Update()
+    {
+        if (string.IsNullOrEmpty(categoryName) == false)
+        {
+            product.Category = categories.Where(c => c.Name == categoryName).FirstOrDefault();
+            //product.CategoryId = product.Category.Id;
+        }
+        if (string.IsNullOrEmpty(unitName) == false)
+        {
+            product.Unit = units.Where(c => c.Name == unitName).FirstOrDefault();
+            //product.UnitId= product.Unit.Id;
+            //product.Unit = null;
+        }
+        await expensesServiceProduct.UpdateItem(product.Id,product, serviceParameterProduct);
+        @inject NavigationManager navigationManager;
+        navigationManager.NavigateTo("/pages/settings/productpage");
+
+    }
+}

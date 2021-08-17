@@ -1,0 +1,60 @@
+﻿@page "/pages/settings/addproduct"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+<h3>Add Product</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New Product Name</MudText>
+<MudTextField @bind-Value="product.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="product.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+ <MudSelect T="Category" Label="Category" @bind-Value="@category" >
+     @foreach (Category item in categories)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Unit" Label="Unit" @bind-Value="@unit" >
+     @foreach (Unit item in units)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+        </MudSelect>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/productpage" Size="Size.Large">Cancel</MudButton>
+</div>
+
+
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+        protected Product product { get; set; } = new Product();
+    protected List<Category> categories { get; set; } = new List<Category>();
+    protected List<Unit> units { get; set; } = new List<Unit>();
+    private Category category;
+    private Unit unit;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var expensesServiceCategory = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
+        var serviceParameterCategory = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
+
+        categories = await expensesServiceCategory.GetList(serviceParameterCategory);
+
+        var expensesServiceUnit = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
+        var serviceParameterUnit = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units");
+
+        units = await expensesServiceUnit.GetList(serviceParameterUnit);
+
+
+        //return base.OnInitializedAsync();
+    }
+    protected async Task AddAsync()
+    {
+        product.Category = category;
+        product.Unit = unit;
+        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/products");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<Product> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Product>(Http);
+            await expensesService.AddItem(product, serviceParameter);
+        NavigationManager.NavigateTo("pages/settings/productpage");
+    }
+}

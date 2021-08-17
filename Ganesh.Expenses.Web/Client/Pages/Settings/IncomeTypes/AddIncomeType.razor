@@ -8,7 +8,7 @@
 <MudTextField @bind-Value="incometype.Name" T="string" Label="Income Type Name" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/bankpage" Size="Size.Large">Cancel</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/incometypepage" Size="Size.Large">Cancel</MudButton>
 </div>
 
 
@@ -18,7 +18,12 @@
         protected IncomeType incometype { get; set; } = new IncomeType();
         protected async Task AddAsync()
         {
-        await Http.PostAsJsonAsync("api/incometypes", incometype);
+            Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = 
+                        new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incometypes");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<IncomeType> expensesService =
+                        new Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType>(Http);
+            await expensesService.AddItem(incometype, serviceParameter);
+
         NavigationManager.NavigateTo("pages/settings/incometypepage");
         }
 }

@@ -29,9 +29,12 @@
     private IncomeType incometype = null;
     private string searchString = "";
     private string link;
-
+     private Ganesh.Expenses.Web.Client.Services.IExpensesService<IncomeType> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
     protected override async Task OnInitializedAsync()
     {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incometypes");
         await Getincometypes();
     }
 
@@ -50,17 +53,13 @@
     }
     private async Task Delete(int id)
     {
-        await Http.DeleteAsync($"api/incometypes/{id}");
+        await expensesService.DeleteItem(id, serviceParameter);
         snackBar.Add("Income Type Deleted.", Severity.Success);
         await Getincometypes();
     }
     private async Task<List<IncomeType>> Getincometypes()
     {
-        incometypes = new List<IncomeType>();
-        foreach(IncomeType b in await Http.GetFromJsonAsync<IncomeType[]>("api/incometypes"))
-        {
-            incometypes.Add(b);
-        }
+        incometypes = await expensesService.GetList(serviceParameter);
         return incometypes;
     }
 }

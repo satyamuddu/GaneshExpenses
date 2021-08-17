@@ -28,9 +28,12 @@
     private Unit Unit = null;
     private string searchString = "";
     private string link;
-
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Unit> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
     protected override async Task OnInitializedAsync()
     {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units"); 
         await GetUnits();
     }
 
@@ -49,18 +52,14 @@
     }
     private async Task Delete(int id)
     {
-        await Http.DeleteAsync($"api/units/{id}");
+        await expensesService.DeleteItem(id, serviceParameter);
         snackBar.Add("Unit Deleted.", Severity.Success);
         await GetUnits();
     }
     private async Task<List<Unit>> GetUnits()
     {
-        Units = new List<Unit>();
-        Unit[] units = await Http.GetFromJsonAsync<Unit[]>("api/units");
-        foreach(Unit b in units)
-        {
-            Units.Add(b);
-        }
+        Units = await expensesService.GetList(serviceParameter);
+
         return Units;
     }
 }

@@ -1,0 +1,34 @@
+﻿@page "/pages/settings/editunit/{id}"
+@inject HttpClient Http
+
+<h3>Edit Unit</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit New Unit Details</MudText>
+
+<MudTextField @bind-Value="unit.Name" T="string" Label="Account Holder Name" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/unitlist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    [Parameter]
+    public string id{ get; set; }
+    public Unit unit { get; set; } = new Unit();
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Unit> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter { get; set; }
+    = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units");
+
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
+        unit = await expensesService.GetItem(Convert.ToInt32(id), serviceParameter);
+    }
+    async Task Update()
+    {
+        await expensesService.UpdateItem(unit.Id, unit, serviceParameter);
+        @inject NavigationManager navigationManager;
+        navigationManager.NavigateTo("/pages/settings/unitpage");
+    }
+}

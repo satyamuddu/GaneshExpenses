@@ -1,0 +1,37 @@
+﻿@page "/pages/settings/editcategory/{id}"
+@inject HttpClient Http
+@inject Ganesh.Expenses.Web.Client.Services.ICategoryService categoryService
+
+<h3>Edit Category</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit New Category Details</MudText>
+
+<MudTextField @bind-Value="category.Name" T="string" Label="Account Holder Name" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="/pages/settings/categorieslist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    [Parameter]
+    public string id{ get; set; }
+    public Category category { get; set; } = new Category();
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Category> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter { get; set; } = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
+
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
+        category = await categoryService.GetCategory(Convert.ToInt32(id));
+    }
+    async Task Update()
+    {
+        await expensesService.UpdateItem(category.Id, category, serviceParameter);
+        //await categoryService.UpdateCategory(category);
+
+        @inject NavigationManager navigationManager;
+        navigationManager.NavigateTo("/pages/settings/categorypage");
+
+    }
+}
