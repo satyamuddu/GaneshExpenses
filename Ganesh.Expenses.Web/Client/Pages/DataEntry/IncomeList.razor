@@ -1,0 +1,85 @@
+﻿@page "/pages/dataentry/incomelist"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+
+<h3>Income List</h3>
+@inject MudBlazor.ISnackbar snackBar
+
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Link="pages/dataentry/addincome" Size="Size.Large">Add Income</MudButton>
+
+<MudTable Items="@incomes" Dense=true Filter="new Func<Income, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of Incomes ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Amount</MudTh>
+        <MudTh>Descripton</MudTh>
+         <MudTh>Bank Name</MudTh>
+        <MudTh>Account #</MudTh>
+        <MudTh>Income Type</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Date">@context.Date.ToShortDateString()</MudTd>
+         <MudTd DataLabel="Amount">@context.Amount</MudTd>
+         <MudTd DataLabel="Description">@context.Description</MudTd>
+         <MudTd DataLabel="Bank">@if (@context.Bank !=null) @context.Bank.BankName</MudTd>
+         <MudTd DataLabel="Account #">@if (@context.Bank !=null) @context.Bank.AccountNumber</MudTd>
+         <MudTd DataLabel="IncomeType">@if (@context.IncomeType != null) @context.IncomeType.Name</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<Income> incomes = new List<Income>();
+
+    private Income income = null;
+    private string searchString = "";
+    private string link;
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Income> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Income>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incomes");
+        await GetIncomes();
+    }
+
+    private bool Search(Income income)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (income.Amount.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (income.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if ($"{income.Name} {income.Branch} {income.AccountNumber}".Contains(searchString))
+        //    return true;
+        //if ($"{income.BankName} {income.Branch} {income.AccountNumber}".Contains(searchString))
+        //    return true;
+        return false;
+    }
+    private void Edit(int id)
+    {
+        link = $"/pages/dataentry/editincome/{id}";
+        income = incomes.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await expensesService.DeleteItem(id, serviceParameter);
+        snackBar.Add("Bank Deleted.", Severity.Success);
+        await GetIncomes();
+    }
+    private async Task<List<Income>> GetIncomes()
+    {
+        incomes = await expensesService.GetList(serviceParameter);
+        return incomes;
+    }
+}

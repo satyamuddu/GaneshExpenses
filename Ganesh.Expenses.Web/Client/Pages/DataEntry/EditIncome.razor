@@ -1,11 +1,10 @@
-﻿@page "/pages/dataentry/addincome"
-
-@inject NavigationManager NavigationManager 
+﻿@page "/pages/dataentry/editincome/{id}"
 @inject HttpClient Http
-@using System
-<h3>AddI ncome</h3>
+@inject NavigationManager NavigationManager
 
-<MudText Typo="Typo.h4" GutterBottom="true">Add New Income Details</MudText>
+<h3>Edit Income</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Edit Income Details</MudText>
 
 <MudDatePicker Label="Date" Editable="true" @bind-Date="date" />
 
@@ -34,6 +33,9 @@
 
 
 @code {
+    [Parameter]
+    public string id{ get; set; }
+
     public bool allFieldsEntered { get; set; } = true;
     protected Income income { get; set; } = new Income();
     private DateTime? date = DateTime.Today;
@@ -47,17 +49,25 @@
     Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank> expensesServiceBank;
     Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterBank;
 
+    Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incomes");
+    Ganesh.Expenses.Web.Client.Services.IExpensesService<Income> expensesService;
 
     protected async override Task OnInitializedAsync()
     {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Income>(Http);
+
+        income = await expensesService.GetItem(Convert.ToInt32(id), serviceParameter);
+        
         expensesServiceIncomeType = new Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType>(Http);
         serviceParameterIncomeType = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incometypes");
+        
         incometypes = await expensesServiceIncomeType.GetList(serviceParameterIncomeType);
 
         expensesServiceBank = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank>(Http);
         serviceParameterBank = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/banks");
         banks = await expensesServiceBank.GetList(serviceParameterBank);
-
+        bank = income.Bank;
+        incometype = income.IncomeType;
 
         base.OnInitializedAsync();
     }
@@ -75,7 +85,7 @@
         income.Date = date.Value;
         Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incomes");
         Ganesh.Expenses.Web.Client.Services.IExpensesService<Income> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Income>(Http);
-        await expensesService.AddItem(income, serviceParameter);
+        await expensesService.UpdateItem(income.Id, income, serviceParameter);
             
         NavigationManager.NavigateTo("/pages/dataentry/incomelist");
     }

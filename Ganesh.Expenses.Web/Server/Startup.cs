@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Ganesh.Expenses.Web.Server.Data;
+using Ganesh.Expenses.Web.Server.Repository;
 
 namespace Ganesh.Expenses.Web.Server
 {
@@ -30,6 +31,9 @@ namespace Ganesh.Expenses.Web.Server
 
             services.AddDbContext<GaneshExpensesWebServerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GaneshExpensesWebServerContext")));
+
+            services.AddScoped<IIncomeRepository, IncomeRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

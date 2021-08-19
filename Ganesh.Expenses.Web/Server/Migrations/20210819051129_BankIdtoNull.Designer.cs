@@ -4,14 +4,16 @@ using Ganesh.Expenses.Web.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ganesh.Expenses.Web.Server.Migrations
 {
     [DbContext(typeof(GaneshExpensesWebServerContext))]
-    partial class GaneshExpensesWebServerContextModelSnapshot : ModelSnapshot
+    [Migration("20210819051129_BankIdtoNull")]
+    partial class BankIdtoNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

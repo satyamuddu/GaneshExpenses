@@ -15,11 +15,11 @@ namespace Ganesh.Expenses.Web.Shared
         public string Description { get; set; }
         
         [ForeignKey("IncomeType")]
-        public int IncomeTypeId { get; set; }
+        public int? IncomeTypeId { get; set; }
         public IncomeType IncomeType { get; set; }  
         public Bank Bank{ get; set; }   
         [ForeignKey("Bank")]
-        public int BankId {  get; set; }
+        public int? BankId {  get; set; }
         
     }
 }
