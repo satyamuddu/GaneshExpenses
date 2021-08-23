@@ -7,6 +7,7 @@
     </MudNavGroup>
     <MudNavGroup Title="Data Entry" Icon="@Icons.Material.Outlined.Today" Expanded="true">
         <MudNavLink Href="/pages/dataentry/incomelist" Icon="@Icons.Material.Outlined.AccountBalance">List all Incomes</MudNavLink>
+        <MudNavLink Href="/pages/dataentry/personandrelationlist" Icon="@Icons.Material.Outlined.SupervisedUserCircle">List all Persons with Relation.</MudNavLink>
 
     </MudNavGroup>
     <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings" Expanded="true">
@@ -15,6 +16,9 @@
         <MudNavLink Icon="@Icons.Material.Outlined.Category" OnClick="@(() => OpenIncomeCategoryPage())">Categories</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Rounded.AdUnits" OnClick="@(() => OpenUnitPage())">Units</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Outlined.Ballot" OnClick="@(() => OpenProductPage())">Products</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Ballot" OnClick="@(() => OpenTransactionModePage())">Transaction Modes</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Ballot" OnClick="@(() => OpenRelationTypePage())">Relation Types</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Ballot" OnClick="@(() => OpenFamilyGroupPage())">Family Groups</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
@@ -39,5 +43,17 @@
     void OpenProductPage()
     {
         navigationManager.NavigateTo("pages/settings/productpage");
+    }
+    void OpenTransactionModePage()
+    {
+        navigationManager.NavigateTo("pages/settings/transactionmodepage");
+    }
+    void OpenRelationTypePage()
+    {
+        navigationManager.NavigateTo("pages/settings/relationtypepage");
+    }
+    void OpenFamilyGroupPage()
+    {
+        navigationManager.NavigateTo("pages/settings/familygrouppage");
     }
 }

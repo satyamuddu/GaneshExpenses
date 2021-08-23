@@ -42,13 +42,13 @@ namespace Ganesh.Expenses.Web.Client.Services
 
         public async Task<List<T>> GetList(IServiceParameter serviceParameter)
         {
-            var Categories = new List<T>();
+            var list = new List<T>();
 
             foreach (T b in await httpClient.GetFromJsonAsync<T[]>(serviceParameter.GetList()))
             {
-                Categories.Add(b);
+                list.Add(b);
             }
-            return Categories;
+            return list;
         }
 
         public async Task<HttpResponseMessage> UpdateItem(int id, T item, IServiceParameter serviceParameter)

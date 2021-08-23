@@ -1,0 +1,86 @@
+﻿@page "/pages/dataentry/addpersonandrelation"
+
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+@using System
+
+
+<h3>Add New Person and Relation</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New PersonAndRelation Details</MudText>
+
+<MudTextField @bind-Value="personandrelation.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
+
+<MudSelect T="FamilyGroup" Label="Family Group" @bind-Value="@familyGroup" >
+     @foreach (FamilyGroup item in familyGroups)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+</MudSelect>
+
+
+<MudSelect T="RelationType" Label="Relation Type" @bind-Value="@relationType" >
+     @foreach (RelationType item in relationTypes)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+</MudSelect>
+<MudTextField @bind-Value="personandrelation.Contact" T="string" Label="Contact" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="personandrelation.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+
+<div Class="d-flex justify-space-between align-center">
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/dataentry/personandrelationlist" Size="Size.Large">Cancel</MudButton>
+</div>
+
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+    protected PersonAndRelation personandrelation { get; set; } = new PersonAndRelation();
+    private DateTime? date = DateTime.Today;
+    private List<FamilyGroup> familyGroups { get; set; } = new List<FamilyGroup>();
+    private FamilyGroup familyGroup;
+    private List<RelationType> relationTypes { get; set; } = new List<RelationType>();
+    private RelationType relationType;
+    Ganesh.Expenses.Web.Client.Services.ExpensesService<FamilyGroup> expensesServiceFamilyGroup;
+    Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterFamilyGroups;
+
+    Ganesh.Expenses.Web.Client.Services.ExpensesService<RelationType> expensesServiceRelationType;
+    Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterRelationType;
+
+    private async Task Enter()
+    {
+        await AddAsync();
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        expensesServiceFamilyGroup = new Ganesh.Expenses.Web.Client.Services.ExpensesService<FamilyGroup>(Http);
+        serviceParameterFamilyGroups = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/familygroups");
+        familyGroups = await expensesServiceFamilyGroup.GetList(serviceParameterFamilyGroups);
+
+        expensesServiceRelationType = new Ganesh.Expenses.Web.Client.Services.ExpensesService<RelationType>(Http);
+        serviceParameterRelationType = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/relationtypes");
+        relationTypes = await expensesServiceRelationType.GetList(serviceParameterRelationType);
+
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task AddAsync()
+    {
+        if (familyGroup != null)
+        {
+            personandrelation.FamilyGroupId = familyGroup.Id;
+        }
+        if (relationType!=null)
+        {
+            personandrelation.RelationTypeId = relationType.Id;
+        }
+        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/personandrelations");
+        Ganesh.Expenses.Web.Client.Services.IExpensesService<PersonAndRelation> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<PersonAndRelation>(Http);
+        await expensesService.AddItem(personandrelation, serviceParameter);
+            
+        NavigationManager.NavigateTo("/pages/dataentry/personandrelationlist");
+    }
+}

@@ -5,10 +5,10 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Bank Details</MudText>
 <MudTextField @bind-Value="bank.Name" T="string" Label="Account Holder Name" Variant="Variant.Outlined"></MudTextField>
-<MudTextField @bind-Value="bank.BankName" T="string" Label="Bank Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.BankName" T="string" Label="ex : ICICI, HDFC etc" Variant="Variant.Outlined"></MudTextField>
 
 <MudTextField @bind-Value="bank.AccountNumber" T="string" Label="Account Number" Variant="Variant.Outlined"></MudTextField>
-<MudTextField @bind-Value="bank.Branch" T="string" Label="Branch" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="bank.Branch" T="string" Label="Branch Name" Variant="Variant.Outlined"></MudTextField>
 <MudTextField @bind-Value="bank.IFSC" T="string" Label="IFSC" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>

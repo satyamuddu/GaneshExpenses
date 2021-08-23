@@ -1,0 +1,65 @@
+﻿@page "/pages/settings/utransactionModeslist"
+@using Ganesh.Expenses.Web.Shared
+@inject HttpClient Http
+@inject MudBlazor.ISnackbar snackBar
+
+<MudTable Height="500px" Items="@TransactionModes" Dense=true Filter="new Func<TransactionMode, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of TransactionModes ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>TransactionMode Name</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="TransactionMode Name">@context.Name</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<TransactionMode> TransactionModes = new List<TransactionMode>();
+
+    private TransactionMode TransactionMode = null;
+    private string searchString = "";
+    private string link;
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<TransactionMode> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<TransactionMode>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/transactionmodes"); 
+        await GetTransactionModes();
+    }
+
+    private bool Search(TransactionMode TransactionMode)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (TransactionMode.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+     private void Edit(int id)
+    {
+        link = $"/pages/settings/edittransactionmode/{id}";
+        TransactionMode = TransactionModes.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await expensesService.DeleteItem(id, serviceParameter);
+        snackBar.Add("TransactionMode Deleted.", Severity.Success);
+        await GetTransactionModes();
+    }
+    private async Task<List<TransactionMode>> GetTransactionModes()
+    {
+        TransactionModes = await expensesService.GetList(serviceParameter);
+
+        return TransactionModes;
+    }
+}

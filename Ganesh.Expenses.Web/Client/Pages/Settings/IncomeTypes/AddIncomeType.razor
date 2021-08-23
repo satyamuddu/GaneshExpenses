@@ -5,7 +5,7 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Income Type Details</MudText>
 
-<MudTextField @bind-Value="incometype.Name" T="string" Label="Income Type Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="incometype.Name" T="string" Label="ex : Salary, Bank Interest" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/incometypepage" Size="Size.Large">Cancel</MudButton>

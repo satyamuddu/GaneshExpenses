@@ -33,7 +33,10 @@ namespace Ganesh.Expenses.Web.Server
                     options.UseSqlServer(Configuration.GetConnectionString("GaneshExpensesWebServerContext")));
 
             services.AddScoped<IIncomeRepository, IncomeRepository>();
-
+            services.AddScoped<ITransactionModeRepository, TransactionModeRepository>();
+            services.AddScoped<IRelationTypeRepository, RelationTypeRepository>();
+            services.AddScoped<IFamilyGroupRepository, FamilyGroupRepository>();
+            services.AddScoped<IPersonAndRelationRepository, PersonAndRelationRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

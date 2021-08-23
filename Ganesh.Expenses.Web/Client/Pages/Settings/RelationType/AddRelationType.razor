@@ -1,0 +1,28 @@
+﻿@page "/pages/settings/addrelationtype"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+<h3>Add RelationType</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New RelationType Name</MudText>
+<MudTextField @bind-Value="RelationType.Name" T="string" Label="ex : Wife, Husband, Daughter etc" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/relationtypepage" Size="Size.Large">Cancel</MudButton>
+</div>
+
+
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+        protected RelationType RelationType { get; set; } = new RelationType();
+        protected async Task AddAsync()
+        {
+                        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = 
+                        new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/relationtypes");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<RelationType> expensesService =
+                        new Ganesh.Expenses.Web.Client.Services.ExpensesService<RelationType>(Http);
+            await expensesService.AddItem(RelationType, serviceParameter);
+
+        NavigationManager.NavigateTo("pages/settings/relationtypepage");
+        }
+}

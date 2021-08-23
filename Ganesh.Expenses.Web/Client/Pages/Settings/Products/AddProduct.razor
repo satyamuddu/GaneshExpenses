@@ -2,22 +2,24 @@
 @inject NavigationManager NavigationManager 
 @inject HttpClient Http
 <h3>Add Product</h3>
-
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Product Name</MudText>
-<MudTextField @bind-Value="product.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
-<MudTextField @bind-Value="product.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+
  <MudSelect T="Category" Label="Category" @bind-Value="@category" >
      @foreach (Category item in categories)
             {
                 <MudSelectItem Value="@item">@item.Name</MudSelectItem>
             }
-        </MudSelect>
+</MudSelect>
+<MudTextField @bind-Value="product.Name" T="string" Label="Name of the Product" Variant="Variant.Outlined"></MudTextField>
+
         <MudSelect T="Unit" Label="Unit" @bind-Value="@unit" >
      @foreach (Unit item in units)
             {
                 <MudSelectItem Value="@item">@item.Name</MudSelectItem>
             }
         </MudSelect>
+<MudTextField @bind-Value="product.Description" T="string" Label="Product Description" Variant="Variant.Outlined"></MudTextField>
+
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/productpage" Size="Size.Large">Cancel</MudButton>

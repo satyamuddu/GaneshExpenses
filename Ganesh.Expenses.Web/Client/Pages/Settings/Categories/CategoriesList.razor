@@ -4,7 +4,7 @@
 @inject MudBlazor.ISnackbar snackBar
 @inject Ganesh.Expenses.Web.Client.Services.ICategoryService categoryService
 
-<MudTable Items="@Categories" Dense=true Filter="new Func<Category, bool>(Search)">
+<MudTable Height="500px" Items="@Categories" Dense=true Filter="new Func<Category, bool>(Search)">
      <ToolBarContent>
         <MudText Typo="Typo.h6">List of Categories ...</MudText>
         <MudSpacer />

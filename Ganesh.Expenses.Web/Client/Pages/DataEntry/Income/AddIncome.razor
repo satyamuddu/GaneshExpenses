@@ -59,7 +59,7 @@
         banks = await expensesServiceBank.GetList(serviceParameterBank);
 
 
-        base.OnInitializedAsync();
+        await base.OnInitializedAsync();
     }
 
     protected async Task AddAsync()

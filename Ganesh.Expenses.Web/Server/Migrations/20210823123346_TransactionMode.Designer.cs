@@ -4,14 +4,16 @@ using Ganesh.Expenses.Web.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ganesh.Expenses.Web.Server.Migrations
 {
     [DbContext(typeof(GaneshExpensesWebServerContext))]
-    partial class GaneshExpensesWebServerContextModelSnapshot : ModelSnapshot
+    [Migration("20210823123346_TransactionMode")]
+    partial class TransactionMode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,21 +63,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.FamilyGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FamilyGroup");
-                });
-
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Income", b =>
                 {
                     b.Property<int>("Id")
@@ -122,37 +109,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.ToTable("IncomeType");
                 });
 
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.PersonAndRelation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Contact")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FamilyGroupId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RelationTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FamilyGroupId");
-
-                    b.HasIndex("RelationTypeId");
-
-                    b.ToTable("PersonAndRelation");
-                });
-
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -179,21 +135,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.HasIndex("UnitId");
 
                     b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.RelationType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RelationType");
                 });
 
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.TransactionMode", b =>
@@ -239,25 +180,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.Navigation("Bank");
 
                     b.Navigation("IncomeType");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.PersonAndRelation", b =>
-                {
-                    b.HasOne("Ganesh.Expenses.Web.Shared.FamilyGroup", "FamilyGroup")
-                        .WithMany()
-                        .HasForeignKey("FamilyGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ganesh.Expenses.Web.Shared.RelationType", "RelationType")
-                        .WithMany()
-                        .HasForeignKey("RelationTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FamilyGroup");
-
-                    b.Navigation("RelationType");
                 });
 
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Product", b =>

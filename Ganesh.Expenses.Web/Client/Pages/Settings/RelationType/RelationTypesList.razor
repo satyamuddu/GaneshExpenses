@@ -1,19 +1,19 @@
-﻿@page "/pages/settings/unitslist"
+﻿@page "/pages/settings/relationtypeslist"
 @using Ganesh.Expenses.Web.Shared
 @inject HttpClient Http
 @inject MudBlazor.ISnackbar snackBar
 
-<MudTable Height="500px" Items="@Units" Dense=true Filter="new Func<Unit, bool>(Search)">
+<MudTable Height="500px" Items="@RelationTypes" Dense=true Filter="new Func<RelationType, bool>(Search)">
      <ToolBarContent>
-        <MudText Typo="Typo.h6">List of Units ...</MudText>
+        <MudText Typo="Typo.h6">List of RelationTypes ...</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Unit Name</MudTh>
+        <MudTh>RelationType Name</MudTh>
     </HeaderContent>
      <RowTemplate>
-         <MudTd DataLabel="Unit Name">@context.Name</MudTd>
+         <MudTd DataLabel="RelationType Name">@context.Name</MudTd>
          <MudTd DataLabel="">
             <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
             <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
@@ -23,43 +23,43 @@
 
 
 @code {
-    private List<Unit> Units = new List<Unit>();
+    private List<RelationType> RelationTypes = new List<RelationType>();
 
-    private Unit Unit = null;
+    private RelationType RelationType = null;
     private string searchString = "";
     private string link;
-    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Unit> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<RelationType> expensesService;
     private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
     protected override async Task OnInitializedAsync()
     {
-        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
-        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units"); 
-        await GetUnits();
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<RelationType>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/relationtypes"); 
+        await GetRelationTypes();
     }
 
-    private bool Search(Unit Unit)
+    private bool Search(RelationType RelationType)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (Unit.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (RelationType.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
      private void Edit(int id)
     {
-        link = $"/pages/settings/editunit/{id}";
-        Unit = Units.FirstOrDefault(c => c.Id == id);
+        link = $"/pages/settings/editrelationtype/{id}";
+        RelationType = RelationTypes.FirstOrDefault(c => c.Id == id);
     }
     private async Task Delete(int id)
     {
         await expensesService.DeleteItem(id, serviceParameter);
-        snackBar.Add("Unit Deleted.", Severity.Success);
-        await GetUnits();
+        snackBar.Add("RelationType Deleted.", Severity.Success);
+        await GetRelationTypes();
     }
-    private async Task<List<Unit>> GetUnits()
+    private async Task<List<RelationType>> GetRelationTypes()
     {
-        Units = await expensesService.GetList(serviceParameter);
+        RelationTypes = await expensesService.GetList(serviceParameter);
 
-        return Units;
+        return RelationTypes;
     }
 }

@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Shared\Ganesh.Expenses.Web.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Settings\FamilyGroup\" />
+    <Folder Include="Pages\Settings\RelationType\" />
+    <Folder Include="Pages\Settings\TransactionMode\" />
+  </ItemGroup>
+
 </Project>

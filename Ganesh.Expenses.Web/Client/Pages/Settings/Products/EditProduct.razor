@@ -5,8 +5,6 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true">Edit New Product Details</MudText>
 
-<MudTextField @bind-Value="product.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
-<MudTextField @bind-Value="product.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
 
 <MudSelect T="string" Label="Category" @bind-Value="@categoryName" >
      @foreach (Category item in categories)
@@ -14,12 +12,14 @@
                 <MudSelectItem Value="@item.Name">@item.Name</MudSelectItem>
             }
 </MudSelect>
+<MudTextField @bind-Value="product.Name" T="string" Label="Name of the Product" Variant="Variant.Outlined"></MudTextField>
 <MudSelect T="string" Label="Unit" @bind-Value="@unitName" >
      @foreach (Unit item in units)
             {
                 <MudSelectItem Value="@item.Name">@item.Name</MudSelectItem>
             }
 </MudSelect>
+<MudTextField @bind-Value="product.Description" T="string" Label="Product Description" Variant="Variant.Outlined"></MudTextField>
 
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => Update())">Update</MudButton>

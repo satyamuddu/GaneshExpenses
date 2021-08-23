@@ -1,0 +1,83 @@
+﻿@page "/pages/dataentry/personandrelationlist"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+
+<h3>PersonAndRelation List</h3>
+@inject MudBlazor.ISnackbar snackBar
+
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Link="pages/dataentry/addpersonandrelation" Size="Size.Large">Add PersonAndRelation</MudButton>
+
+<MudTable Height="500px" Items="@personandrelations" Dense=true Filter="new Func<PersonAndRelation, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of PersonAndRelations ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Family Group</MudTh>
+        <MudTh>Relation</MudTh>
+         <MudTh>Contact</MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Name">@context.Name</MudTd>
+         <MudTd DataLabel="Family Group">@if(@context.FamilyGroup!=null) @context.FamilyGroup.Name</MudTd>
+         <MudTd DataLabel="Relation">@if(@context.RelationType!=null) @context.RelationType.Name</MudTd>
+         <MudTd DataLabel="Contact">@context.Contact</MudTd>
+         <MudTd DataLabel="Description">@context.Description</MudTd>
+         <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<PersonAndRelation> personandrelations = new List<PersonAndRelation>();
+
+    private PersonAndRelation personandrelation = null;
+    private string searchString = "";
+    private string link;
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<PersonAndRelation> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<PersonAndRelation>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/personandrelations");
+        await GetPersonAndRelations();
+    }
+
+    private bool Search(PersonAndRelation personandrelation)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (personandrelation.Name.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (personandrelation.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if ($"{personandrelation.Name} {personandrelation.Branch} {personandrelation.AccountNumber}".Contains(searchString))
+        //    return true;
+        //if ($"{personandrelation.BankName} {personandrelation.Branch} {personandrelation.AccountNumber}".Contains(searchString))
+        //    return true;
+        return false;
+    }
+    private void Edit(int id)
+    {
+        link = $"/pages/dataentry/editpersonandrelation/{id}";
+        personandrelation = personandrelations.FirstOrDefault(c => c.Id == id);
+    }
+    private async Task Delete(int id)
+    {
+        await expensesService.DeleteItem(id, serviceParameter);
+        snackBar.Add("Bank Deleted.", Severity.Success);
+        await GetPersonAndRelations();
+    }
+    private async Task<List<PersonAndRelation>> GetPersonAndRelations()
+    {
+        personandrelations = await expensesService.GetList(serviceParameter);
+        return personandrelations;
+    }
+}

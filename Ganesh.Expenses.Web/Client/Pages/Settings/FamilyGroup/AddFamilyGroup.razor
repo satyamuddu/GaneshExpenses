@@ -1,0 +1,33 @@
+﻿@page "/pages/settings/addfamilygroup"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+<h3>Add FamilyGroup</h3>
+<div>
+<form @onsubmit="Enter">
+<MudText Typo="Typo.h4" GutterBottom="true">Add New FamilyGroup Name</MudText>
+<MudTextField @bind-Value="FamilyGroup.Name" T="string" Label="ex : Family, Friends, Neighours etc" Variant="Variant.Outlined"></MudTextField>
+<div Class="d-flex justify-space-between align-center">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/familygrouppage" Size="Size.Large">Cancel</MudButton>
+</div>
+</form>
+</div>
+
+@code {
+    public bool allFieldsEntered { get; set; } = true;
+        protected FamilyGroup FamilyGroup { get; set; } = new FamilyGroup();
+        protected async Task AddAsync()
+        {
+                        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = 
+                        new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/familygroups");
+            Ganesh.Expenses.Web.Client.Services.IExpensesService<FamilyGroup> expensesService =
+                        new Ganesh.Expenses.Web.Client.Services.ExpensesService<FamilyGroup>(Http);
+            await expensesService.AddItem(FamilyGroup, serviceParameter);
+
+        NavigationManager.NavigateTo("pages/settings/familygrouppage");
+        }
+    private void Enter()
+    {
+        AddAsync();
+    }
+}

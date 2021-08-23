@@ -4,7 +4,7 @@
 <h3>Add Unit</h3>
 
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Unit Name</MudText>
-<MudTextField @bind-Value="unit.Name" T="string" Label="Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="unit.Name" T="string" Label="Unit Name" Variant="Variant.Outlined"></MudTextField>
 <div Class="d-flex justify-space-between align-center">
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/settings/unitpage" Size="Size.Large">Cancel</MudButton>
