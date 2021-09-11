@@ -4,14 +4,16 @@ using Ganesh.Expenses.Web.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ganesh.Expenses.Web.Server.Migrations
 {
     [DbContext(typeof(GaneshExpensesWebServerContext))]
-    partial class GaneshExpensesWebServerContextModelSnapshot : ModelSnapshot
+    [Migration("20210909190715_CreditDebit")]
+    partial class CreditDebit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,30 +48,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.ToTable("Bank");
                 });
 
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.BankBalance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<float>("Balance")
-                        .HasColumnType("real");
-
-                    b.Property<int?>("BankId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.ToTable("BankBalance");
-                });
-
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -96,7 +74,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                         .HasColumnType("real");
 
                     b.Property<int?>("BankId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -133,7 +110,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                         .HasColumnType("real");
 
                     b.Property<int?>("BankId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -327,24 +303,11 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.ToTable("Unit");
                 });
 
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.BankBalance", b =>
-                {
-                    b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bank");
-                });
-
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Credit", b =>
                 {
                     b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
                         .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BankId");
 
                     b.HasOne("Ganesh.Expenses.Web.Shared.IncomeType", "IncomeType")
                         .WithMany()
@@ -365,9 +328,7 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                 {
                     b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
                         .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BankId");
 
                     b.HasOne("Ganesh.Expenses.Web.Shared.IncomeType", "IncomeType")
                         .WithMany()

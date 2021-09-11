@@ -1,7 +1,9 @@
 ﻿@page "/pages/settings/banklist"
+@using Ganesh.Expenses.Web.Client.Components
 @using Ganesh.Expenses.Web.Shared
 @inject HttpClient Http
 @inject MudBlazor.ISnackbar snackBar
+@inject IDialogService DialogService
 
 @*<h3>BanksList</h3>*@
 
@@ -68,10 +70,17 @@
     }
     private async Task Delete(int id)
     {
+        bool proceed = await PageHelper.ShowConfirmationDialog(DialogService, "Delete","Do you really want to delete these records? This process cannot be undone.",Color.Error, "Delete");
+        if(proceed==false)
+        {
+            return;
+        }
+
         await expensesService.DeleteItem(id, serviceParameter);
         snackBar.Add("Bank Deleted.", Severity.Success);
         await GetBanks();
     }
+    
     private async Task<List<Bank>> GetBanks()
     {
         banks = await expensesService.GetList(serviceParameter);

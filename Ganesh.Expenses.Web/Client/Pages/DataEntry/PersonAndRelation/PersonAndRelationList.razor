@@ -18,6 +18,7 @@
         <MudTh>Name</MudTh>
         <MudTh>Family Group</MudTh>
         <MudTh>Relation</MudTh>
+         <MudTh>Phone</MudTh>
          <MudTh>Contact</MudTh>
         <MudTh>Description</MudTh>
     </HeaderContent>
@@ -25,6 +26,7 @@
          <MudTd DataLabel="Name">@context.Name</MudTd>
          <MudTd DataLabel="Family Group">@if(@context.FamilyGroup!=null) @context.FamilyGroup.Name</MudTd>
          <MudTd DataLabel="Relation">@if(@context.RelationType!=null) @context.RelationType.Name</MudTd>
+         <MudTd DataLabel="Phone">@context.Phone</MudTd>
          <MudTd DataLabel="Contact">@context.Contact</MudTd>
          <MudTd DataLabel="Description">@context.Description</MudTd>
          <MudTd DataLabel="">

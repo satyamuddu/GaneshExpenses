@@ -23,5 +23,8 @@ namespace Ganesh.Expenses.Web.Server.Data
         public DbSet<Ganesh.Expenses.Web.Shared.RelationType> RelationType { get; set; }
         public DbSet<Ganesh.Expenses.Web.Shared.FamilyGroup> FamilyGroup { get; set; }
         public DbSet<Ganesh.Expenses.Web.Shared.PersonAndRelation> PersonAndRelation { get; set; }
+        public DbSet<Ganesh.Expenses.Web.Shared.Credit> Credit { get; set; }
+        public DbSet<Ganesh.Expenses.Web.Shared.Debit> Debit { get; set; }
+        public DbSet<Ganesh.Expenses.Web.Shared.BankBalance> BankBalance { get; set; }
     }
 }

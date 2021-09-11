@@ -1,6 +1,7 @@
 ﻿@page "/pages/settings/incometypelist"
 @inject HttpClient Http
 @inject MudBlazor.ISnackbar snackBar
+@inject IDialogService DialogService
 
 @*<h3>IncomeTypeList</h3>*@
 
@@ -53,6 +54,11 @@
     }
     private async Task Delete(int id)
     {
+        bool proceed = await PageHelper.ShowConfirmationDialog(DialogService, "Delete","Do you really want to delete these records? This process cannot be undone.",Color.Error, "Delete");
+        if(proceed==false)
+        {
+            return;
+        }
         await expensesService.DeleteItem(id, serviceParameter);
         snackBar.Add("Income Type Deleted.", Severity.Success);
         await Getincometypes();

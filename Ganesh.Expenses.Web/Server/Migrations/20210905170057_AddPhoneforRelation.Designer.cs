@@ -4,14 +4,16 @@ using Ganesh.Expenses.Web.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ganesh.Expenses.Web.Server.Migrations
 {
     [DbContext(typeof(GaneshExpensesWebServerContext))]
-    partial class GaneshExpensesWebServerContextModelSnapshot : ModelSnapshot
+    [Migration("20210905170057_AddPhoneforRelation")]
+    partial class AddPhoneforRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,30 +48,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.ToTable("Bank");
                 });
 
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.BankBalance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<float>("Balance")
-                        .HasColumnType("real");
-
-                    b.Property<int?>("BankId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.ToTable("BankBalance");
-                });
-
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -83,80 +61,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Credit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<int?>("BankId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("IncomeTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PersonAndRelationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("IncomeTypeId");
-
-                    b.HasIndex("PersonAndRelationId");
-
-                    b.ToTable("Credit");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Debit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<int?>("BankId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("IncomeTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PersonAndRelationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("IncomeTypeId");
-
-                    b.HasIndex("PersonAndRelationId");
-
-                    b.ToTable("Debit");
                 });
 
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.FamilyGroup", b =>
@@ -325,63 +229,6 @@ namespace Ganesh.Expenses.Web.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Unit");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.BankBalance", b =>
-                {
-                    b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bank");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Credit", b =>
-                {
-                    b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ganesh.Expenses.Web.Shared.IncomeType", "IncomeType")
-                        .WithMany()
-                        .HasForeignKey("IncomeTypeId");
-
-                    b.HasOne("Ganesh.Expenses.Web.Shared.PersonAndRelation", "PersonAndRelation")
-                        .WithMany()
-                        .HasForeignKey("PersonAndRelationId");
-
-                    b.Navigation("Bank");
-
-                    b.Navigation("IncomeType");
-
-                    b.Navigation("PersonAndRelation");
-                });
-
-            modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Debit", b =>
-                {
-                    b.HasOne("Ganesh.Expenses.Web.Shared.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ganesh.Expenses.Web.Shared.IncomeType", "IncomeType")
-                        .WithMany()
-                        .HasForeignKey("IncomeTypeId");
-
-                    b.HasOne("Ganesh.Expenses.Web.Shared.PersonAndRelation", "PersonAndRelation")
-                        .WithMany()
-                        .HasForeignKey("PersonAndRelationId");
-
-                    b.Navigation("Bank");
-
-                    b.Navigation("IncomeType");
-
-                    b.Navigation("PersonAndRelation");
                 });
 
             modelBuilder.Entity("Ganesh.Expenses.Web.Shared.Income", b =>

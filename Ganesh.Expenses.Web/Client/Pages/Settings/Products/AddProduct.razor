@@ -3,21 +3,30 @@
 @inject HttpClient Http
 <h3>Add Product</h3>
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Product Name</MudText>
+ <MudAutocomplete T="string" Label="Category" @bind-Value="value1" SearchFunc="@Search1" 
+                         ResetValueOnEmptyText="@resetValueOnEmptyText" 
+                         CoerceText="@coerceText" CoerceValue="@coerceValue"/>
 
- <MudSelect T="Category" Label="Category" @bind-Value="@category" >
+<MudTextField @bind-Value="product.Name" T="string" Label="Name of the Product" Variant="Variant.Outlined"></MudTextField>
+
+                         <MudAutocomplete T="string" Label="Unit" @bind-Value="value2" SearchFunc="@Search2" 
+                         ResetValueOnEmptyText="@resetValueOnEmptyText" 
+                         CoerceText="@coerceText" CoerceValue="@coerceValue"/>
+
+@* <MudSelect T="Category" Label="Category" @bind-Value="@category" >
      @foreach (Category item in categories)
             {
                 <MudSelectItem Value="@item">@item.Name</MudSelectItem>
             }
 </MudSelect>
-<MudTextField @bind-Value="product.Name" T="string" Label="Name of the Product" Variant="Variant.Outlined"></MudTextField>
 
         <MudSelect T="Unit" Label="Unit" @bind-Value="@unit" >
      @foreach (Unit item in units)
             {
                 <MudSelectItem Value="@item">@item.Name</MudSelectItem>
             }
-        </MudSelect>
+        </MudSelect>*@
+
 <MudTextField @bind-Value="product.Description" T="string" Label="Product Description" Variant="Variant.Outlined"></MudTextField>
 
 <div Class="d-flex justify-space-between align-center">
@@ -29,31 +38,58 @@
 
 @code {
     public bool allFieldsEntered { get; set; } = true;
-        protected Product product { get; set; } = new Product();
+    protected Product product { get; set; } = new Product();
     protected List<Category> categories { get; set; } = new List<Category>();
     protected List<Unit> units { get; set; } = new List<Unit>();
     private Category category;
     private Unit unit;
 
+
+    private bool resetValueOnEmptyText;
+    private bool coerceText;
+    private bool coerceValue;
+    private string value1, value2;
+    private string[] _categories = { };
+    private string[] _units = { };
+
+    private async Task<IEnumerable<string>> Search1(string value)
+    {
+        return await Search(_categories, value);
+        
+    }
+    private async Task<IEnumerable<string>> Search2(string value)
+    {
+        return await Search(_units, value);
+    }
+    private async Task<IEnumerable<string>> Search(string [] list, string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(1);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return list;
+        return list.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
     protected async override Task OnInitializedAsync()
     {
         var expensesServiceCategory = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Category>(Http);
         var serviceParameterCategory = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/categories");
 
         categories = await expensesServiceCategory.GetList(serviceParameterCategory);
-
+        _categories = categories.Select(a => a.Name).ToArray();
         var expensesServiceUnit = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Unit>(Http);
         var serviceParameterUnit = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/units");
 
         units = await expensesServiceUnit.GetList(serviceParameterUnit);
-
+         _units = units.Select(a => a.Name).ToArray();
 
         //return base.OnInitializedAsync();
     }
     protected async Task AddAsync()
     {
-        product.Category = category;
-        product.Unit = unit;
+        product.Category = categories.Where(a=>a.Name==value1).FirstOrDefault();
+        product.Unit = units.Where(a=>a.Name==value2).FirstOrDefault();
         Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/products");
             Ganesh.Expenses.Web.Client.Services.IExpensesService<Product> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Product>(Http);
             await expensesService.AddItem(product, serviceParameter);

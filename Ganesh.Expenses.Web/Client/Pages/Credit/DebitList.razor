@@ -1,0 +1,85 @@
+﻿@page "/pages/dataentry/debitlist"
+@inject NavigationManager NavigationManager 
+@inject HttpClient Http
+
+<h3>Debit List</h3>
+@inject MudBlazor.ISnackbar snackBar
+
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Link="pages/dataentry/adddebit" Size="Size.Large">Add Debit</MudButton>
+
+<MudTable Height="500px" Items="@debits" Dense=true Filter="new Func<Debit, bool>(Search)">
+     <ToolBarContent>
+        <MudText Typo="Typo.h6">List of Debits ...</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Amount</MudTh>
+        <MudTh>Descripton</MudTh>
+         <MudTh>Bank Name</MudTh>
+        <MudTh>Account #</MudTh>
+        <MudTh>Debit Type</MudTh>
+    </HeaderContent>
+     <RowTemplate>
+         <MudTd DataLabel="Date">@context.Date.ToShortDateString()</MudTd>
+         <MudTd DataLabel="Amount">@context.Amount</MudTd>
+         <MudTd DataLabel="Description">@context.Description</MudTd>
+         <MudTd DataLabel="Bank">@if (@context.Bank !=null) @context.Bank.BankName</MudTd>
+         <MudTd DataLabel="Account #">@if (@context.Bank !=null) @context.Bank.AccountNumber</MudTd>
+         <MudTd DataLabel="DebitType">@if (@context.IncomeType != null) @context.IncomeType.Name</MudTd>
+        @* <MudTd DataLabel="">
+            <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>*@
+     </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<Debit> debits = new List<Debit>();
+
+    private Debit debit = null;
+    private string searchString = "";
+    private string link;
+    private Ganesh.Expenses.Web.Client.Services.IExpensesService<Debit> expensesService;
+    private Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter;
+    protected override async Task OnInitializedAsync()
+    {
+        expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Debit>(Http);
+        serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/debits"); //api/Debits
+        await GetDebits();
+    }
+
+    private bool Search(Debit debit)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (debit.Amount.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (debit.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if ($"{debit.Name} {debit.Branch} {debit.AccountNumber}".Contains(searchString))
+        //    return true;
+        //if ($"{debit.BankName} {debit.Branch} {debit.AccountNumber}".Contains(searchString))
+        //    return true;
+        return false;
+    }
+    //private void Edit(int id)
+    //{
+    //    link = $"/pages/dataentry/editdebit/{id}";
+    //    debit = debits.FirstOrDefault(c => c.Id == id);
+    //}
+    //private async Task Delete(int id)
+    //{
+    //    await expensesService.DeleteItem(id, serviceParameter);
+    //    snackBar.Add("Bank Deleted.", Severity.Success);
+    //    await GetDebits();
+    //}
+    private async Task<List<Debit>> GetDebits()
+    {
+        debits = await expensesService.GetList(serviceParameter);
+        return debits;
+    }
+}

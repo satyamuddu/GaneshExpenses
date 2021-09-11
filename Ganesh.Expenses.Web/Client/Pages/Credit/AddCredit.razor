@@ -1,0 +1,135 @@
+﻿@page "/pages/dataentry/addcredit"
+
+
+<h3>Add Credit</h3>
+
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@using System
+
+<MudText Typo="Typo.h4" GutterBottom="true">Add New Credit Details</MudText>
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudDatePicker Label="Date" Editable="true" @bind-Date="date" />
+                <MudSelect T="Bank" Label="Bank Name" @bind-Value="@bank" 
+                Required="true" RequiredError="Bank must be selected."
+                Validation="@(new Func<Bank, string>(IsBankSelected))">
+                    @foreach (Bank item in banks)
+                    {
+                        <MudSelectItem Value="@item">@item.Name, @item.BankName, @item.AccountNumber</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="IncomeType" Label="Income Type" @bind-Value="@incometype">
+                    @foreach (IncomeType item in incometypes)
+                    {
+                        <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudTextField @bind-Value="income.Amount" T="float" Label="Amount" Variant="Variant.Outlined" Required="true" 
+                RequiredError="Enter Credit Amount."
+                Validation="@(new Func<float, string>(AmountMustbeGreaterThanZero))"></MudTextField>
+                <MudTextField @bind-Value="income.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+
+                <MudSelect T="PersonAndRelation" Label="From Relation" @bind-Value="@personAndRelation">
+                    @foreach (PersonAndRelation item in personAndRelations)
+                    {
+                        <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudForm>
+        </MudCardContent>
+        <div Class="d-flex justify-space-between align-center">
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Size="Size.Large" @onclick="@(() => AddAsync())">Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!allFieldsEntered)" Link="pages/dataentry/creditlist" Size="Size.Large">Cancel</MudButton>
+
+        </div>
+    </MudCard>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="@($"Show Errors ({errors.Length})")">
+            @foreach (var error in errors)
+            {
+                <MudText Color="@Color.Error">@error</MudText>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+
+</div>
+
+
+@code {
+
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    public bool allFieldsEntered { get; set; } = true;
+    private DateTime? date = DateTime.Today;
+    private Bank bank;
+    private List<Bank> banks { get; set; } = new List<Bank>();
+    private List<IncomeType> incometypes { get; set; } = new List<IncomeType>();
+    private IncomeType incometype;
+    protected Income income { get; set; } = new Income();
+    private List<PersonAndRelation> personAndRelations { get; set; } = new List<PersonAndRelation>();
+    private PersonAndRelation personAndRelation;
+
+    Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType> expensesServiceIncomeType;
+    Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterIncomeType;
+
+    Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank> expensesServiceBank;
+    Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterBank;
+
+    protected async override Task OnInitializedAsync()
+    {
+        expensesServiceIncomeType = new Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType>(Http);
+        serviceParameterIncomeType = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/incometypes");
+        incometypes = await expensesServiceIncomeType.GetList(serviceParameterIncomeType);
+
+        expensesServiceBank = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank>(Http);
+        serviceParameterBank = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/banks");
+        banks = await expensesServiceBank.GetList(serviceParameterBank);
+
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task AddAsync()
+    {
+        if (incometype != null)
+        {
+            income.IncomeTypeId = incometype.Id;
+        }
+        if (bank != null)
+        {
+            income.BankId = bank.Id;
+        }
+        income.Date = date.Value;
+
+        Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/credits");
+        Ganesh.Expenses.Web.Client.Services.IExpensesService<Income> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Income>(Http);
+        await expensesService.AddItem(income, serviceParameter);
+
+        NavigationManager.NavigateTo("/pages/dataentry/creditlist");
+    }
+    private string AmountMustbeGreaterThanZero(float amount)
+    {
+        if ( amount <= 0)
+        {
+            return "Amount must be greated than 0";
+        }
+        return null;
+    }
+    private string IsBankSelected(Bank b)
+    {
+        if (bank==null)
+        {
+            return "Bank must select";
+        }
+        return null;
+    }
+}

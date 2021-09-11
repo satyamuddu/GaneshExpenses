@@ -31,12 +31,21 @@ namespace Ganesh.Expenses.Web.Server
 
             services.AddDbContext<GaneshExpensesWebServerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GaneshExpensesWebServerContext")));
+            
+            AddRepositoryServices(services);
+        }
 
+        private static void AddRepositoryServices(IServiceCollection services)
+        {
             services.AddScoped<IIncomeRepository, IncomeRepository>();
             services.AddScoped<ITransactionModeRepository, TransactionModeRepository>();
             services.AddScoped<IRelationTypeRepository, RelationTypeRepository>();
             services.AddScoped<IFamilyGroupRepository, FamilyGroupRepository>();
             services.AddScoped<IPersonAndRelationRepository, PersonAndRelationRepository>();
+            services.AddScoped<ICreditRepository, CreditRepository>();
+            services.AddScoped<IDebitRepository, DebitRepository>();
+            services.AddScoped<IBankRepository, BankRepository>();
+            services.AddScoped<IBankBalanceRepository, BankBalanceRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
