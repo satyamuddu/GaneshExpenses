@@ -21,6 +21,7 @@
          <MudTh>Bank Name</MudTh>
         <MudTh>Account #</MudTh>
         <MudTh>Credit Type</MudTh>
+        <MudTh>Transaction Mode</MudTh>
     </HeaderContent>
      <RowTemplate>
          <MudTd DataLabel="Date">@context.Date.ToShortDateString()</MudTd>
@@ -29,6 +30,7 @@
          <MudTd DataLabel="Bank">@if (@context.Bank !=null) @context.Bank.BankName</MudTd>
          <MudTd DataLabel="Account #">@if (@context.Bank !=null) @context.Bank.AccountNumber</MudTd>
          <MudTd DataLabel="CreditType">@if (@context.IncomeType != null) @context.IncomeType.Name</MudTd>
+         <MudTd DataLabel="CreditType">@if (@context.TransactionMode != null) @context.TransactionMode.Name</MudTd>
         @* <MudTd DataLabel="">
             <MudFab Link=@link @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"  />
             <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />

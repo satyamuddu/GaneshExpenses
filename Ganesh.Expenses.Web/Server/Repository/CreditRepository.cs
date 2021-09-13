@@ -30,12 +30,14 @@ namespace Ganesh.Expenses.Web.Server.Repository
         }
         public async Task<ActionResult<IEnumerable<Credit>>> GetCredit()
         {
-            return await _context.Credit.Include(i => i.IncomeType).Include(a => a.PersonAndRelation).Include(b => b.Bank).ToListAsync();
+            return await _context.Credit.Include(i => i.IncomeType).Include(a => a.PersonAndRelation).Include(b => b.Bank).Include(t=>t.TransactionMode).ToListAsync();
         }
 
         public async Task<ActionResult<Credit>> GetCredit(int id)
         {
-            return await _context.Credit.Where(i => i.Id == id).Include(i => i.IncomeType).Include(a => a.PersonAndRelation).Include(b => b.Bank).FirstOrDefaultAsync();
+            return await _context.Credit.Where(i => i.Id == id).Include(i => i.IncomeType)
+                .Include(a => a.PersonAndRelation).Include(b => b.Bank)
+                .Include(t=>t.TransactionMode).FirstOrDefaultAsync();
         }
 
         public async Task<IActionResult> PutCredit(int id, Credit Credit)

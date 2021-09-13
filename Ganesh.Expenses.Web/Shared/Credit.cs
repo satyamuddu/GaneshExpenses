@@ -25,6 +25,9 @@ namespace Ganesh.Expenses.Web.Shared
         [ForeignKey("PersonAndRelation")]
         public int? PersonAndRelationId { get; set; } 
         public PersonAndRelation PersonAndRelation { get; set; }
+        [ForeignKey("TransactionMode")]
+        public int? TransactionModeId { get; set; }
+        public TransactionMode TransactionMode { get; set; }
     }
     public class Credit : CreditDebit
     {

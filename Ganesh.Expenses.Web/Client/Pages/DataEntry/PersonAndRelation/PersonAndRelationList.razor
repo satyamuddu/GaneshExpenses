@@ -60,6 +60,15 @@
             return true;
         if (personandrelation.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
+
+        if (personandrelation.RelationType!=null && personandrelation.RelationType.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (personandrelation.FamilyGroup!=null && personandrelation.FamilyGroup.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
         //if ($"{personandrelation.Name} {personandrelation.Branch} {personandrelation.AccountNumber}".Contains(searchString))
         //    return true;
         //if ($"{personandrelation.BankName} {personandrelation.Branch} {personandrelation.AccountNumber}".Contains(searchString))

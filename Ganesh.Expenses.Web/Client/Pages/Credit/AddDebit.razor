@@ -7,6 +7,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @using System
+@using Ganesh.Expenses.Web.Client.Services
 
 <MudText Typo="Typo.h4" GutterBottom="true">Add New Debit Details</MudText>
 <div style="max-width: 400px;">
@@ -29,15 +30,21 @@
                     }
                 </MudSelect>
 
-                <MudTextField @bind-Value="income.Amount" T="float" Label="Amount" Variant="Variant.Outlined" Required="true" 
+                <MudTextField @bind-Value="debit.Amount" T="float" Label="Amount" Variant="Variant.Outlined" Required="true" 
                 RequiredError="Enter Debit Amount."
                 Validation="@(new Func<float, string>(AmountMustbeGreaterThanZero))"></MudTextField>
-                <MudTextField @bind-Value="income.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="debit.Description" T="string" Label="Description" Variant="Variant.Outlined"></MudTextField>
 
                 <MudSelect T="PersonAndRelation" Label="From Relation" @bind-Value="@personAndRelation">
                     @foreach (PersonAndRelation item in personAndRelations)
                     {
                         <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+                 <MudSelect T="TransactionMode" Label="From Relation" @bind-Value="@TransactionMode">
+                    @foreach (TransactionMode item in TransactionModes )
+                    {
+                        <MudSelectItem Value="@item">@item.Name</MudSelectItem>
                     }
                 </MudSelect>
             </MudForm>
@@ -74,9 +81,12 @@
     private List<Bank> banks { get; set; } = new List<Bank>();
     private List<IncomeType> incometypes { get; set; } = new List<IncomeType>();
     private IncomeType incometype;
-    protected Income income { get; set; } = new Income();
+    protected Debit debit { get; set; } = new Debit();
     private List<PersonAndRelation> personAndRelations { get; set; } = new List<PersonAndRelation>();
     private PersonAndRelation personAndRelation;
+
+    private TransactionMode TransactionMode;
+    private List<TransactionMode > TransactionModes { get; set; } = new List<TransactionMode>();
 
     Ganesh.Expenses.Web.Client.Services.ExpensesService<IncomeType> expensesServiceIncomeType;
     Ganesh.Expenses.Web.Client.Services.ServiceParameter serviceParameterIncomeType;
@@ -93,6 +103,8 @@
         expensesServiceBank = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Bank>(Http);
         serviceParameterBank = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/banks");
         banks = await expensesServiceBank.GetList(serviceParameterBank);
+         personAndRelations = await new ExpensesService<PersonAndRelation>(Http).GetList(new ServiceParameter("api/personandrelations"));
+        TransactionModes = await new ExpensesService<TransactionMode>(Http).GetList(new ServiceParameter("api/transactionmodes"));
 
         await base.OnInitializedAsync();
     }
@@ -101,17 +113,25 @@
     {
         if (incometype != null)
         {
-            income.IncomeTypeId = incometype.Id;
+            debit.IncomeTypeId = incometype.Id;
         }
         if (bank != null)
         {
-            income.BankId = bank.Id;
+            debit.BankId = bank.Id;
         }
-        income.Date = date.Value;
+        debit.Date = date.Value;
+        if (personAndRelation != null)
+        {
+            debit.PersonAndRelationId = personAndRelation.Id;
+        }
+        if (TransactionMode != null)
+        {
+            debit.TransactionModeId = TransactionMode.Id;
+        }
 
         Ganesh.Expenses.Web.Client.Services.IServiceParameter serviceParameter = new Ganesh.Expenses.Web.Client.Services.ServiceParameter("api/debits");
-        Ganesh.Expenses.Web.Client.Services.IExpensesService<Income> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Income>(Http);
-        await expensesService.AddItem(income, serviceParameter);
+        Ganesh.Expenses.Web.Client.Services.IExpensesService<Debit> expensesService = new Ganesh.Expenses.Web.Client.Services.ExpensesService<Debit>(Http);
+        await expensesService.AddItem(debit, serviceParameter);
 
         NavigationManager.NavigateTo("/pages/dataentry/debitlist");
     }
